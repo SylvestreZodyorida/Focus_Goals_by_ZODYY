@@ -23,7 +23,7 @@ class _WelcomePageState extends State<WelcomePage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => SelectLanguagePage(title: 'Next Page'), // Passez un titre ici
+          builder: (context) => SelectLanguagePage(), // Passez un titre ici
         ),
       );
     });

@@ -1,18 +1,16 @@
+import 'package:fg_by_zodyy/pages/user/login_page.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:fg_by_zodyy/main.dart'; // Import du gestionnaire de langues
 
 class SelectLanguagePage extends StatefulWidget {
-  const SelectLanguagePage({super.key, required this.title});
-
-  final String title;
+  const SelectLanguagePage({super.key});
 
   @override
   State<SelectLanguagePage> createState() => _SelectLanguagePageState();
 }
 
 class _SelectLanguagePageState extends State<SelectLanguagePage> {
-  String selectedLanguage = "en"; // Langue par défaut : Anglais
-  late Box box;
+  String selectedLanguage = LanguageManager.getCurrentLanguage();
 
   List<Map<String, String>> languages = [
     {"code": "en", "name": "English (US)", "flag": "🇺🇸"},
@@ -25,138 +23,120 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
     {"code": "ar", "name": "العربية", "flag": "🇸🇦"},
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _initHive();
-  }
-
-  Future<void> _initHive() async {
-    box = await Hive.openBox('settings'); // Ouvrir la boîte Hive
+  Future<void> _updateLanguage(String languageCode) async {
     setState(() {
-      selectedLanguage = box.get('selected_language', defaultValue: "en");
+      selectedLanguage = languageCode;
     });
-  }
-
-  Future<void> _saveSelectedLanguage(String languageCode) async {
-    await box.put('selected_language', languageCode); // Enregistrer dans Hive
+    await LanguageManager.setCurrentLanguage(languageCode);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF2E2B5F),
-      appBar: AppBar(
-        title: const Text("Choose a language"),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      body: Stack(
         children: [
-          const SizedBox(height: 20),
-          CircleAvatar(
-            backgroundImage: AssetImage('assets/images/logo.png'),
-            radius: 50,
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/fond.png',
+              fit: BoxFit.cover,
+            ),
           ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(20),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 3,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 70),
+              CircleAvatar(
+                backgroundImage: AssetImage('assets/images/logo.png'),
+                radius: 50,
               ),
-              itemCount: languages.length,
-              itemBuilder: (context, index) {
-                final language = languages[index];
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedLanguage = language['code']!;
-                    });
-                    _saveSelectedLanguage(language['code']!);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: selectedLanguage == language['code']
-                          ? Colors.green
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          language['flag']!,
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          language['name']!,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: selectedLanguage == language['code']
-                                ? Colors.white
-                                : Colors.black,
+              const SizedBox(height: 20),
+              const Text(
+                "Choose a language",
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 50),
+              Expanded(
+                child: GridView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 2.5,
+                    mainAxisSpacing: 15,
+                    crossAxisSpacing: 15,
+                  ),
+                  itemCount: languages.length,
+                  itemBuilder: (context, index) {
+                    final language = languages[index];
+                    final isSelected = selectedLanguage == language['code'];
+                    return GestureDetector(
+                      onTap: () => _updateLanguage(language['code']!),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected ? Colors.white : Colors.transparent,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isSelected ? Colors.white : Colors.grey,
+                            width: 1,
                           ),
                         ),
-                      ],
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              language['flag']!,
+                              style: const TextStyle(fontSize: 24),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              language['name']!,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: isSelected ? Colors.black : Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Redirige vers la page suivante après la sélection de la langue
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(), // Redirection vers la page NextPage
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const NextPage(),
+                  child: const Text(
+                    "Continue",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
+                    ),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                ),
               ),
-              child: const Text(
-                "Continue",
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
+            ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-class NextPage extends StatelessWidget {
-  const NextPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Next Page"),
-      ),
-      body: const Center(
-        child: Text("Welcome to the next page!"),
       ),
     );
   }
