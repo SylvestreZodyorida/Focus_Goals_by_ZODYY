@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
             Image.asset('assets/images/logo.png', height: 100), // Utilisation d'Image au lieu de CircleAvatar avec const
             const SizedBox(height: 30),
             const Text(
-              "Welcome Back!",
+              "Bienvenue",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                   Icon(Icons.account_circle, color: Colors.white), // Remplacé par une icône générique
                   SizedBox(width: 10),
                   Text(
-                    "Sign in with Google",
+                    "Se connecter avec Google",
                     style: TextStyle(color: Colors.white),
                   ),
                 ],
@@ -86,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                   Icon(Icons.email, color: Colors.white),
                   SizedBox(width: 10),
                   Text(
-                    "Sign in with Email",
+                    "Se connecter avec Email",
                     style: TextStyle(color: Colors.white),
                   ),
                 ],

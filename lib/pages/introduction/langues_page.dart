@@ -13,8 +13,8 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
   String selectedLanguage = LanguageManager.getCurrentLanguage();
 
   List<Map<String, String>> languages = [
-    {"code": "en", "name": "English (US)", "flag": "🇺🇸"},
     {"code": "fr", "name": "Français", "flag": "🇫🇷"},
+    {"code": "en", "name": "English (US)", "flag": "🇺🇸"},
     {"code": "es", "name": "Español", "flag": "🇪🇸"},
     {"code": "de", "name": "Deutsch", "flag": "🇩🇪"},
     {"code": "it", "name": "Italiano", "flag": "🇮🇹"},
@@ -51,7 +51,7 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
               ),
               const SizedBox(height: 20),
               const Text(
-                "Choose a language",
+                "Choisir une langue",
                 style: TextStyle(
                   fontSize: 22,
                   color: Colors.white,
@@ -126,7 +126,7 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
                     ),
                   ),
                   child: const Text(
-                    "Continue",
+                    "Continuer",
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.black,
