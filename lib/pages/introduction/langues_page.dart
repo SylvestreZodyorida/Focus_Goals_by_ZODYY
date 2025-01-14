@@ -1,5 +1,5 @@
-import 'package:fg_by_zodyy/pages/user/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:fg_by_zodyy/pages/user/login_page.dart'; // Page de connexion
 import 'package:fg_by_zodyy/main.dart'; // Import du gestionnaire de langues
 
 class SelectLanguagePage extends StatefulWidget {
@@ -27,7 +27,15 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
     setState(() {
       selectedLanguage = languageCode;
     });
+    // Mettre à jour la langue dans le gestionnaire de langue (par exemple avec Hive)
     await LanguageManager.setCurrentLanguage(languageCode);
+    // Recharger la page avec la langue mise à jour
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SelectLanguagePage(), // Redirection vers la même page pour recharger
+      ),
+    );
   }
 
   @override
@@ -50,9 +58,9 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
                 radius: 50,
               ),
               const SizedBox(height: 20),
-              const Text(
-                "Choisir une langue",
-                style: TextStyle(
+              Text(
+                "Choisir une langue", // Utiliser une traduction ici si disponible
+                style: const TextStyle(
                   fontSize: 22,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -114,12 +122,12 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const LoginPage(), // Redirection vers la page NextPage
+                        builder: (context) => const LoginPage(), // Redirection vers la page LoginPage
                       ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),

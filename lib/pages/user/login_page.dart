@@ -1,5 +1,113 @@
+
+// import 'package:flutter/material.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:fg_by_zodyy/main.dart'; // Import du gestionnaire de langues
+
+// class LoginPage extends StatefulWidget {
+//   const LoginPage({super.key});
+
+//   @override
+//   _LoginPageState createState() => _LoginPageState();
+// }
+
+// class _LoginPageState extends State<LoginPage> {
+//   final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+//   // Fonction de connexion avec Google
+//   Future<void> _signInWithGoogle() async {
+//     try {
+//       await _googleSignIn.signIn();
+//       // Une fois la connexion réussie, vous pouvez rediriger vers une autre page
+//       // Par exemple : Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+//     } catch (error) {
+//       print(error);
+//     }
+//   }
+
+//   // Fonction de connexion avec Email
+//   void _signInWithEmail() {
+//     // Vous pouvez ici ajouter la logique pour vous connecter avec un email (par exemple, utiliser Firebase Auth).
+//     // Pour simplifier, on va juste rediriger vers une autre page.
+//     // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // Récupérer la langue actuelle
+//     String currentLanguage = LanguageManager.getCurrentLanguage();
+//     Locale currentLocale = Locale(currentLanguage); // Créez le Locale en fonction de la langue
+
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(currentLanguage == 'fr' ? 'Connexion' : 'Login'),
+//         backgroundColor: const Color(0xFF18013E),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(20.0),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           crossAxisAlignment: CrossAxisAlignment.stretch,
+//           children: [
+//             const SizedBox(height: 20),
+//             Image.asset('assets/images/logo.png', height: 100), // Utilisation d'Image au lieu de CircleAvatar avec const
+//             const SizedBox(height: 30),
+//             Text(
+//               currentLanguage == 'fr' ? 'Bienvenue' : 'Welcome',
+//               style: const TextStyle(
+//                 fontSize: 24,
+//                 fontWeight: FontWeight.bold,
+//                 color: Colors.black,
+//               ),
+//               textAlign: TextAlign.center,
+//             ),
+//             const SizedBox(height: 30),
+//             ElevatedButton(
+//               onPressed: _signInWithGoogle,
+//               style: ElevatedButton.styleFrom(
+//                 backgroundColor: Colors.blue, // Couleur du bouton Google
+//                 padding: const EdgeInsets.symmetric(vertical: 15),
+//               ),
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: const [
+//                   Icon(Icons.account_circle, color: Colors.white), // Remplacé par une icône générique
+//                   SizedBox(width: 10),
+//                   Text(
+//                     "Se connecter avec Google",
+//                     style: TextStyle(color: Colors.white),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             const SizedBox(height: 20),
+//             ElevatedButton(
+//               onPressed: _signInWithEmail,
+//               style: ElevatedButton.styleFrom(
+//                 backgroundColor: Colors.grey, // Couleur du bouton email
+//                 padding: const EdgeInsets.symmetric(vertical: 15),
+//               ),
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: const [
+//                   Icon(Icons.email, color: Colors.white),
+//                   SizedBox(width: 10),
+//                   Text(
+//                     "Se connecter avec Email",
+//                     style: TextStyle(color: Colors.white),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import de la classe générée par l10n
+import 'package:fg_by_zodyy/main.dart'; // Import du gestionnaire de langues
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -31,9 +139,25 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Récupérer la langue actuelle avec AppLocalizations
+    String currentLanguage = LanguageManager.getCurrentLanguage();
+    Locale currentLocale = Locale(currentLanguage); // Créez le Locale en fonction de la langue
+
+    // Vérifiez si la localisation est bien disponible
+    final appLocalizations = AppLocalizations.of(context);
+    if (appLocalizations == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Connexion"),
+          backgroundColor: const Color(0xFF18013E),
+        ),
+        body: const Center(child: CircularProgressIndicator()), // Affiche un indicateur de chargement si la localisation n'est pas disponible
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: Text(appLocalizations.login), // Utilisation de la traduction pour le titre
         backgroundColor: const Color(0xFF18013E),
       ),
       body: Padding(
@@ -43,11 +167,11 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 20),
-            Image.asset('assets/images/logo.png', height: 100), // Utilisation d'Image au lieu de CircleAvatar avec const
+            Image.asset('assets/images/logo.png', height: 100),
             const SizedBox(height: 30),
-            const Text(
-              "Bienvenue",
-              style: TextStyle(
+            Text(
+              appLocalizations.welcome, // Utilisation de la traduction pour "Bienvenue" ou "Welcome"
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -58,13 +182,13 @@ class _LoginPageState extends State<LoginPage> {
             ElevatedButton(
               onPressed: _signInWithGoogle,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Couleur du bouton Google
+                backgroundColor: Colors.blue,
                 padding: const EdgeInsets.symmetric(vertical: 15),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
-                  Icon(Icons.account_circle, color: Colors.white), // Remplacé par une icône générique
+                  Icon(Icons.account_circle, color: Colors.white),
                   SizedBox(width: 10),
                   Text(
                     "Se connecter avec Google",
@@ -77,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
             ElevatedButton(
               onPressed: _signInWithEmail,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey, // Couleur du bouton email
+                backgroundColor: Colors.grey,
                 padding: const EdgeInsets.symmetric(vertical: 15),
               ),
               child: Row(
