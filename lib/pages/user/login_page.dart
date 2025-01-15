@@ -84,24 +84,48 @@ class _LoginPageState extends State<LoginPage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 80), // Espacement entre le texte et les boutons
+                // ElevatedButton(
+                //   onPressed: _signInWithGoogle,
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: const Color.fromARGB(255, 236, 144, 6),
+                //     padding: const EdgeInsets.symmetric(vertical: 15),
+                //   ),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       const Icon(Icons.account_circle, color: Colors.white),
+                //       const SizedBox(width: 10),
+                //       Text(
+                //         appLocalizations.sign_in_with_google, // Traduction pour "Se connecter avec Google"
+                //         style: const TextStyle(color: Colors.white),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+
                 ElevatedButton(
                   onPressed: _signInWithGoogle,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 236, 144, 6),
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                     padding: const EdgeInsets.symmetric(vertical: 15),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.account_circle, color: Colors.white),
+                      SizedBox(
+                        width: 24, // Taille du logo
+                        height: 24,
+                        child: Image.asset('assets/images/google_logo.png'), // Logo Google
+                      ),
                       const SizedBox(width: 10),
                       Text(
-                        appLocalizations.sign_in_with_google, // Traduction pour "Se connecter avec Google"
-                        style: const TextStyle(color: Colors.white),
+                        appLocalizations.sign_in_with_google, // Texte pour "Se connecter avec Google"
+                        style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                       ),
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 20), // Espacement entre les boutons
                 ElevatedButton(
                   onPressed: _signInWithEmail,

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "758215266306",
+    "project_id": "focus-goals-by-zodyy",
+    "storage_bucket": "focus-goals-by-zodyy.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758215266306:android:8db876535f78c7db24971b",
+        "android_client_info": {
+          "package_name": "com.example.fg_by_zodyy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANGFCJUS4Hnz0LSNMASMuG03rBaNc_YNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

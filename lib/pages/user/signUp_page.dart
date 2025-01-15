@@ -87,7 +87,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ElevatedButton(
                   onPressed: _signUpWithGoogle,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 236, 144, 6),
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                     padding: const EdgeInsets.symmetric(vertical: 15),
                   ),
                   child: Row(
@@ -97,7 +97,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       const SizedBox(width: 10),
                       Text(
                         appLocalizations.sign_up_with_google, // Traduction pour "S'inscrire avec Google"
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                       ),
                     ],
                   ),
