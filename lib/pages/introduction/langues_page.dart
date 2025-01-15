@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fg_by_zodyy/pages/user/login_page.dart'; // Page de connexion
 import 'package:fg_by_zodyy/main.dart'; // Import du gestionnaire de langues
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class SelectLanguagePage extends StatefulWidget {
   const SelectLanguagePage({super.key});
 
@@ -23,24 +23,20 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
     {"code": "ar", "name": "العربية", "flag": "🇸🇦"},
   ];
 
+
   Future<void> _updateLanguage(String languageCode) async {
-    setState(() {
-      selectedLanguage = languageCode;
-    });
-    // Mettre à jour la langue dans le gestionnaire de langue (par exemple avec Hive)
     await LanguageManager.setCurrentLanguage(languageCode);
-    // Recharger la page avec la langue mise à jour
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const SelectLanguagePage(), // Redirection vers la même page pour recharger
-      ),
-    );
+    setState(() {
+      selectedLanguage = languageCode; // Met à jour uniquement la sélection locale
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context);
+
     return Scaffold(
+      
       body: Stack(
         children: [
           Positioned.fill(
@@ -59,7 +55,7 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
               ),
               const SizedBox(height: 20),
               Text(
-                "Choisir une langue", // Utiliser une traduction ici si disponible
+                appLocalizations?.selectLanguage ?? "Choisir une langue",
                 style: const TextStyle(
                   fontSize: 22,
                   color: Colors.white,
@@ -118,24 +114,21 @@ class _SelectLanguagePageState extends State<SelectLanguagePage> {
                 padding: const EdgeInsets.all(20.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Redirige vers la page suivante après la sélection de la langue
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(), // Redirection vers la page LoginPage
-                      ),
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                    backgroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text(
-                    "Continuer",
-                    style: TextStyle(
+                  child: Text(
+                    appLocalizations?.continueButton ?? "Continuer",
+                    style: const TextStyle(
                       fontSize: 18,
                       color: Colors.black,
                     ),

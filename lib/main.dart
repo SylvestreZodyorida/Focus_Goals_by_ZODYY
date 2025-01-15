@@ -1,69 +1,68 @@
+import 'package:fg_by_zodyy/pages/introduction/langues_page.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:fg_by_zodyy/pages/introduction/welcome_page.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'package:fg_by_zodyy/pages/introduction/welcome_page.dart';
+// import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // import 'package:fg_by_zodyy/main.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-  await LanguageManager.init(); // Initialisation de Hive et de la gestion des langues
+  await Hive.initFlutter(); // Initialisation de Hive
+  await Hive.openBox('settings'); // Ouvrir une boîte pour sauvegarder les paramètres
   runApp(const MyApp());
 }
+
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Charger la langue sélectionnée
-    String currentLanguage = LanguageManager.getCurrentLanguage();
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Focus Goals',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF18013E)),
-        useMaterial3: true,
-      ),
-      locale: Locale(currentLanguage), // Appliquer la langue sélectionnée
-      supportedLocales: const [
-        Locale('fr'),
-        Locale('en'),
-        Locale('es'),
-        Locale('de'),
-        Locale('it'),
-        Locale('pt'),
-        Locale('zh'),
-        Locale('ar'),
-      ],
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      home: const WelcomePage(title: 'Flutter Demo Home Page'),
+    return ValueListenableBuilder<String>(
+      valueListenable: LanguageManager.languageNotifier,
+      builder: (context, currentLanguage, child) {
+        return MaterialApp(
+          locale: Locale(currentLanguage),
+          supportedLocales: const [
+            Locale('fr'),
+            Locale('en'),
+            Locale('es'),
+            Locale('de'),
+            Locale('it'),
+            Locale('pt'),
+            Locale('zh'),
+            Locale('ar'),
+          ],
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          debugShowCheckedModeBanner: false, // Désactive la bannière DEBUG
+          home: const SelectLanguagePage(),
+        );
+      },
     );
   }
 }
 
-
-
 class LanguageManager {
-  static late Box settingsBox;
+  static final ValueNotifier<String> _currentLanguage = ValueNotifier<String>(_loadInitialLanguage());
 
-  // Initialisation de Hive
-  static Future<void> init() async {
-    settingsBox = await Hive.openBox('settings');
+  /// Charge la langue initiale depuis Hive ou utilise "fr" par défaut
+  static String _loadInitialLanguage() {
+    final box = Hive.box('settings');
+    return box.get('language', defaultValue: 'fr');
   }
 
-  // Obtenir la langue actuelle (par défaut "fr")
-  static String getCurrentLanguage() {
-    return settingsBox.get('selected_language', defaultValue: "fr");
-  }
+  /// Retourne la langue actuelle
+  static String getCurrentLanguage() => _currentLanguage.value;
 
-  // Enregistrer la langue sélectionnée
+  /// Définit la langue et la sauvegarde dans Hive
   static Future<void> setCurrentLanguage(String languageCode) async {
-    await settingsBox.put('selected_language', languageCode);
+    _currentLanguage.value = languageCode;
+    final box = Hive.box('settings');
+    await box.put('language', languageCode); // Sauvegarde dans Hive
   }
+
+  /// Retourne le `ValueNotifier` pour écouter les changements de langue
+  static ValueNotifier<String> get languageNotifier => _currentLanguage;
 }

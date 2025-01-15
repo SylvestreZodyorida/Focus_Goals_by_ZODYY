@@ -3,6 +3,9 @@
     "login": "Login",
     "welcome": "Welcome",
     "sign_in_with_google": "Sign in with Google",
-    "sign_in_with_email": "Sign in with Email"
+    "sign_in_with_email": "Sign in with Email",
+    "continueButton": "Continue",
+    "selectLanguage": "Select Language",
+    "sign_up": "Sign up here"
   }
   
