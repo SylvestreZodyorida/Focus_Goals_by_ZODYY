@@ -5,9 +5,14 @@
     "welcome": "Bienvenue",
     "sign_in_with_google": "Se connecter avec Google",
     "sign_in_with_email": "Se connecter avec Email",
+    "sign_up_with_google": "S'inscrire avec Google",
+    "sign_up_with_email": "S'inscrire avec Email",
     "continueButton": "Continuer",
     "selectLanguage": "Choisir une langue",
-    "sign_up": "S'inscrire ici"
+    "sign_up": "S'inscrire ici",
+    "not_a_member": "Pas encore inscrit ?",
+    "already_a_member": "Déjà inscrit ?"
+
 
   }
   

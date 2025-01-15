@@ -1,33 +1,33 @@
-import 'package:fg_by_zodyy/pages/user/signUp_page.dart';
+import 'package:fg_by_zodyy/pages/user/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import de la classe générée par l10n
 import 'package:fg_by_zodyy/main.dart'; // Import du gestionnaire de langues
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _SignUpPageState createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  // Fonction de connexion avec Google
-  Future<void> _signInWithGoogle() async {
+  // Fonction d'inscription avec Google
+  Future<void> _signUpWithGoogle() async {
     try {
       await _googleSignIn.signIn();
-      // Une fois la connexion réussie, vous pouvez rediriger vers une autre page
+      // Une fois l'inscription réussie, vous pouvez rediriger vers une autre page
       // Par exemple : Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
     } catch (error) {
       print(error);
     }
   }
 
-  // Fonction de connexion avec Email
-  void _signInWithEmail() {
-    // Vous pouvez ici ajouter la logique pour vous connecter avec un email (par exemple, utiliser Firebase Auth).
+  // Fonction d'inscription avec Email
+  void _signUpWithEmail() {
+    // Vous pouvez ici ajouter la logique pour vous inscrire avec un email (par exemple, utiliser Firebase Auth).
     // Pour simplifier, on va juste rediriger vers une autre page.
     // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
   }
@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 10), // Espace entre le logo et le texte
                 Text(
-                  appLocalizations.welcome, // Traduction pour "Bienvenue"
+                  appLocalizations.sign_up, // Traduction pour "S'inscrire"
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 80), // Espacement entre le texte et les boutons
                 ElevatedButton(
-                  onPressed: _signInWithGoogle,
+                  onPressed: _signUpWithGoogle,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 236, 144, 6),
                     padding: const EdgeInsets.symmetric(vertical: 15),
@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                       const Icon(Icons.account_circle, color: Colors.white),
                       const SizedBox(width: 10),
                       Text(
-                        appLocalizations.sign_in_with_google, // Traduction pour "Se connecter avec Google"
+                        appLocalizations.sign_up_with_google, // Traduction pour "S'inscrire avec Google"
                         style: const TextStyle(color: Colors.white),
                       ),
                     ],
@@ -104,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 20), // Espacement entre les boutons
                 ElevatedButton(
-                  onPressed: _signInWithEmail,
+                  onPressed: _signUpWithEmail,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 1, 14, 112),
                     padding: const EdgeInsets.symmetric(vertical: 15),
@@ -115,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                       const Icon(Icons.email, color: Colors.white),
                       const SizedBox(width: 10),
                       Text(
-                        appLocalizations.sign_in_with_email, // Traduction pour "Se connecter avec Email"
+                        appLocalizations.sign_up_with_email, // Traduction pour "S'inscrire avec Email"
                         style: const TextStyle(color: Colors.white),
                       ),
                     ],
@@ -125,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                 // Ajout du texte "Pas encore de compte ?"
                 Center(
                   child: Text(
-                    appLocalizations.not_a_member, // Texte "Pas encore de compte ?"
+                    appLocalizations.already_a_member, // Texte "Pas encore de compte ?"
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -138,16 +138,16 @@ class _LoginPageState extends State<LoginPage> {
                 Center(
                   child: InkWell(
                     onTap: () {
-                      // Navigation vers la page d'inscription
+                      // Navigation vers la page de connexion
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const SignUpPage(), // Redirection vers la page d'inscription
+                          builder: (context) => const LoginPage(), // Redirection vers la page de connexion
                         ),
                       );
                     },
                     child: Text(
-                      appLocalizations.sign_up, // Texte pour le bouton "S'inscrire ici"
+                      appLocalizations.login, // Texte pour le bouton "Se connecter ici"
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
