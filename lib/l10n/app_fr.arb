@@ -1,18 +1,25 @@
-
 {
-    "@@locale": "fr",
-    "login": "Connexion",
-    "welcome": "Bienvenue",
-    "sign_in_with_google": "Se connecter avec Google",
-    "sign_in_with_email": "Se connecter avec Email",
-    "sign_up_with_google": "S'inscrire avec Google",
-    "sign_up_with_email": "S'inscrire avec Email",
-    "continueButton": "Continuer",
-    "selectLanguage": "Choisir une langue",
-    "sign_up": "S'inscrire ici",
-    "not_a_member": "Pas encore inscrit ?",
-    "already_a_member": "Déjà inscrit ?"
-
-
-  }
-  
+  "@@locale": "fr",
+  "login": "Connexion",
+  "welcome": "Bienvenue",
+  "sign_in_with_google": "Se connecter avec Google",
+  "sign_in_with_email": "Se connecter avec Email",
+  "sign_up_with_google": "S'inscrire avec Google",
+  "sign_up_with_email": "S'inscrire avec Email",
+  "continueButton": "Continuer",
+  "selectLanguage": "Choisir une langue",
+  "sign_up": "S'inscrire ici",
+  "signup": "S'inscrire",
+  "not_a_member": "Pas encore inscrit ?",
+  "already_a_member": "Déjà inscrit ?",
+  "email": "Email",
+  "password": "Mot de passe",
+  "sign_in": "Se connecter",
+  "forgot_password": "Mot de passe oublié ?",
+  "reset_password": "Réinitialiser le mot de passe",
+  "welcome_back": "Content de vous revoir !",
+  "create_account": "Créer un compte",
+  "name": "Nom",
+  "birth_date": "Date de naissance",
+  "phone_number": "Numéro de téléphone"
+}

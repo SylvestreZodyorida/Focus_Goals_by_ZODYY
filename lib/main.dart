@@ -1,6 +1,7 @@
 import 'package:fg_by_zodyy/pages/introduction/langues_page.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
 // import 'package:fg_by_zodyy/pages/introduction/welcome_page.dart';
 // import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -10,6 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter(); // Initialisation de Hive
   await Hive.openBox('settings'); // Ouvrir une boîte pour sauvegarder les paramètres
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

@@ -1,16 +1,25 @@
 {
-    "@@locale": "en",
-    "login": "Login",
-    "welcome": "Welcome",
-    "sign_in_with_google": "Sign in with Google",
-    "sign_in_with_email": "Sign in with Email",
-    "sign_up_with_google": "Sign up with Google",
-    "sign_up_with_email": "Sign up with Email",
-    "continueButton": "Continue",
-    "selectLanguage": "Select Language",
-    "sign_up": "Sign up here",
-    "not_a_member": "Not a member ?",
-    "already_a_member": "Already a member ?"
-
-  }
-  
+  "@@locale": "en",
+  "login": "Login",
+  "welcome": "Welcome",
+  "sign_in_with_google": "Sign in with Google",
+  "sign_in_with_email": "Sign in with Email",
+  "sign_up_with_google": "Sign up with Google",
+  "sign_up_with_email": "Sign up with Email",
+  "continueButton": "Continue",
+  "selectLanguage": "Select Language",
+  "sign_up": "Sign up here",
+  "not_a_member": "Not a member?",
+  "already_a_member": "Already a member?",
+  "signup": "Sign up",
+  "email": "Email",
+  "password": "Password",
+  "sign_in": "Sign in",
+  "forgot_password": "Forgot password?",
+  "reset_password": "Reset password",
+  "welcome_back": "Welcome back!",
+  "create_account": "Create an account",
+  "name": "Name",
+  "birth_date": "Birth date",
+  "phone_number": "Phone number"
+}

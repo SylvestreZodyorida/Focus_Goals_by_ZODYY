@@ -1,3 +1,4 @@
+import 'package:fg_by_zodyy/pages/user/emailSignUp_page.dart';
 import 'package:fg_by_zodyy/pages/user/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -104,7 +105,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 20), // Espacement entre les boutons
                 ElevatedButton(
-                  onPressed: _signUpWithEmail,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const EmailSignUpPage()),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 1, 14, 112),
                     padding: const EdgeInsets.symmetric(vertical: 15),
