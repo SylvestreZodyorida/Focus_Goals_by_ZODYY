@@ -21,5 +21,6 @@
     "create_account": "Créer un compte",
     "name": "Nom",
     "birth_date": "Date de naissance",
-    "phone_number": "Numéro de téléphone"
+    "phone_number": "Numéro de téléphone",
+    "logout": "Se déconnecter" 
   }
