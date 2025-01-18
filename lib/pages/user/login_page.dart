@@ -1,12 +1,15 @@
+
+
+import 'package:fg_by_zodyy/pages/home_page.dart';
 import 'package:fg_by_zodyy/pages/user/signUp_page.dart';
 import 'package:fg_by_zodyy/pages/user/emailSignIn_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fg_by_zodyy/pages/user/profile_page.dart';
-
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import de la classe générée par l10n
 import 'package:fg_by_zodyy/main.dart'; // Import du gestionnaire de langues
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hive_flutter/hive_flutter.dart'; // Import de Hive
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -36,9 +39,19 @@ class _LoginPageState extends State<LoginPage> {
           await FirebaseAuth.instance.signInWithCredential(credential);
       final User? user = userCredential.user;
       if (user != null) {
+        // Mettre à jour la langue dans Hive après connexion
+        var box = await Hive.openBox('settings');
+        
+        // Sauvegarde de la langue actuelle
+        await box.put('language', LanguageManager.getCurrentLanguage());
+        
+        // Mettre à jour l'état de connexion dans Hive
+        await box.put('isLoggedIn', true);
+
+        // Naviguer vers la page d'accueil
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ProfilePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       }
     } catch (error) {
@@ -136,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-               ElevatedButton(
+                ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -149,17 +162,16 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children:  [
+                    children: [
                       Icon(Icons.email, color: Colors.white),
                       SizedBox(width: 10),
                       Text(
-                       appLocalizations.sign_in_with_email,
+                        appLocalizations.sign_in_with_email,
                         style: TextStyle(color: Colors.white),
                       ),
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 180),
                 // Ajout du texte "Pas encore de compte ?"
                 Center(

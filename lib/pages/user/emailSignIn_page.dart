@@ -1,8 +1,13 @@
+
+
+
 import 'package:fg_by_zodyy/pages/user/signUp_page.dart';
+import 'package:fg_by_zodyy/pages/user/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import de la classe générée par l10n
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fg_by_zodyy/pages/user/profile_page.dart';
+import 'package:hive_flutter/hive_flutter.dart'; // Import de Hive
+import 'package:fg_by_zodyy/pages/user/signUp_page.dart';
 
 class EmailSignInPage extends StatefulWidget {
   const EmailSignInPage({super.key});
@@ -15,6 +20,19 @@ class _EmailSignInPageState extends State<EmailSignInPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  Box? userBox;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialisation de Hive
+    Hive.initFlutter();
+    // Ouverture de la box Hive pour les données utilisateur
+    Hive.openBox('userBox').then((box) {
+      userBox = box;
+    });
+  }
+
   void _signInWithEmail() async {
     final email = _emailController.text;
     final password = _passwordController.text;
@@ -23,6 +41,15 @@ class _EmailSignInPageState extends State<EmailSignInPage> {
           .signInWithEmailAndPassword(email: email, password: password);
       final User? user = userCredential.user;
       if (user != null) {
+        // Ouvrir la boîte Hive pour mettre à jour les informations de l'utilisateur
+        var box = await Hive.openBox('settings');
+        
+        // Enregistrer l'email dans Hive après connexion réussie
+        await box.put('email', email);
+
+        // Mettre à jour l'état de connexion dans Hive
+        await box.put('isLoggedIn', true);
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const ProfilePage()),

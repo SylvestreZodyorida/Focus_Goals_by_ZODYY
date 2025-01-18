@@ -1,9 +1,11 @@
+
+
 import 'package:fg_by_zodyy/pages/user/login_page.dart';
-import 'package:fg_by_zodyy/pages/user/signUp_page.dart';
+import 'package:fg_by_zodyy/pages/user/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fg_by_zodyy/pages/user/profile_page.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:intl/intl.dart';
 
@@ -22,7 +24,16 @@ class _EmailSignUpPageState extends State<EmailSignUpPage> {
   final TextEditingController _phoneController = TextEditingController();
   PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'FR'); // Default country FR
 
-  void _signUpWithEmail() async {
+  Box? userBox;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialiser Hive
+    Hive.initFlutter();
+  }
+
+  Future<void> _signUpWithEmail() async {
     final email = _emailController.text;
     final password = _passwordController.text;
     final name = _nameController.text;
@@ -37,6 +48,16 @@ class _EmailSignUpPageState extends State<EmailSignUpPage> {
         // Enregistrement des informations supplémentaires dans Firebase
         await user.updateProfile(displayName: name);
         await user.reload();
+
+        // Enregistrer les données de l'utilisateur dans Hive
+        var userBox = await Hive.openBox('userBox');
+        await userBox.put('email', email);
+        await userBox.put('name', name);
+        await userBox.put('birthDate', birthDate);
+        await userBox.put('phone', phone);
+
+        // Mettre à jour l'état de connexion dans Hive
+        await userBox.put('isLoggedIn', true);  // Mise à jour de isLoggedIn
 
         // Envoi de l'email de confirmation
         await user.sendEmailVerification();
