@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _openModal(); // Ouvrir le modal après que le contexte soit disponible
+    // _openModal(); // Ouvrir le modal après que le contexte soit disponible
   }
 
   Future<void> _loadUserProfile() async {
@@ -58,37 +58,82 @@ class _HomePageState extends State<HomePage> {
         context,
         MaterialPageRoute(builder: (context) => const SelectLanguagePage()),
       );
+    }else {
+      _openModal();
     }
-  }
+     // Ouvrir le modal après que le contexte soit disponible
 
+  }
   Future<void> _refreshPage() async {
     await _loadUserProfile();
     setState(() {});
   }
 
-Future<void> _openModal() async {
+ 
   // Différer l'appel de setState() après la construction du widget
+Future<void> _openModal() async {
   WidgetsBinding.instance.addPostFrameCallback((_) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // Permet de contrôler la hauteur
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-      ),
+      backgroundColor: Colors.transparent, // Fond transparent pour que le rayon soit visible
       builder: (context) {
+        // Liste des icônes et des textes associés
+        final List<Map<String, String>> items = [
+          {'image': 'assets/images/icons/objectifs.jpg', 'text': 'Vos objectifs ✨'},
+          {'image': 'assets/images/icons/note.jpg', 'text': 'Vos notes 🗒️'},
+          {'image': 'assets/images/icons/lecture2.jpg', 'text': 'Lire un livre '},
+          {'image': 'assets/images/icons/applications.jpg', 'text': 'Applis utiles'},
+        ];
+
         return Container(
-          height: 700, // Définir la hauteur du modal ici
           padding: const EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 241, 239, 252), // Couleur de fond de la boîte modale
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(25.0)), // Rayon de bordure
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                AppLocalizations.of(context)!.welcome,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
+              // Bloc d'icônes
+              Wrap(
+                spacing: 20.0, // Espacement horizontal entre les blocs
+                runSpacing: 20.0, // Espacement vertical entre les blocs
+                alignment: WrapAlignment.center,
+                children: items.map((item) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Image/icone
+                      Container(
+                        height: 80, // Taille de l'icône
+                        width: 80,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 255, 255, 255), // Couleur de fond des icônes
+                          shape: BoxShape.circle, // Forme circulaire
+                          image: DecorationImage(
+                            image: AssetImage(item['image']!),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // Texte en bas de l'image
+                      Text(
+                        item['text']!,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  );
+                }).toList(),
               ),
               const SizedBox(height: 20),
+              // Boutons
               ElevatedButton(
                 onPressed: () {},
                 child: Text(AppLocalizations.of(context)!.create_account),
@@ -97,6 +142,7 @@ Future<void> _openModal() async {
                 onPressed: () {},
                 child: Text(AppLocalizations.of(context)!.sign_in),
               ),
+              const SizedBox(height: 30),
             ],
           ),
         );

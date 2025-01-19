@@ -57,3 +57,4 @@ flutter:
   generate: true
   assets:
     - assets/images/  # Include all files in this folder
+    - assets/images/icons/  # Include all files in this folder
