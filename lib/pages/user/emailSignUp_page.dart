@@ -1,5 +1,6 @@
 
 
+import 'package:fg_by_zodyy/pages/home_page.dart';
 import 'package:fg_by_zodyy/pages/user/login_page.dart';
 import 'package:fg_by_zodyy/pages/user/profile_page.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +66,7 @@ class _EmailSignUpPageState extends State<EmailSignUpPage> {
         // Si l'inscription réussie, redirige vers la page de profil
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ProfilePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       }
     } catch (e) {

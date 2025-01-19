@@ -3,7 +3,7 @@
 import 'package:fg_by_zodyy/pages/home_page.dart';
 import 'package:fg_by_zodyy/pages/user/emailSignUp_page.dart';
 import 'package:fg_by_zodyy/pages/user/login_page.dart';
-import 'package:fg_by_zodyy/pages/user/profile_page.dart';
+// import 'package:fg_by_zodyy/pages/user/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth

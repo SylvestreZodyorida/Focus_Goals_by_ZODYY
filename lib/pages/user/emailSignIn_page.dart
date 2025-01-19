@@ -1,13 +1,12 @@
 
-
-
+import 'package:fg_by_zodyy/pages/home_page.dart';
 import 'package:fg_by_zodyy/pages/user/signUp_page.dart';
 import 'package:fg_by_zodyy/pages/user/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import de la classe générée par l10n
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hive_flutter/hive_flutter.dart'; // Import de Hive
-import 'package:fg_by_zodyy/pages/user/signUp_page.dart';
+// import 'package:fg_by_zodyy/pages/user/signUp_page.dart';
 
 class EmailSignInPage extends StatefulWidget {
   const EmailSignInPage({super.key});
@@ -52,7 +51,7 @@ class _EmailSignInPageState extends State<EmailSignInPage> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ProfilePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       }
     } catch (e) {

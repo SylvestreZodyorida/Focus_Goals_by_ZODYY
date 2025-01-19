@@ -1,3 +1,8 @@
+import 'package:fg_by_zodyy/pages/main/objectifs_page.dart';
+import 'package:fg_by_zodyy/pages/main/applications_page.dart';
+import 'package:fg_by_zodyy/pages/main/books_page.dart';
+import 'package:fg_by_zodyy/pages/main/notes_page.dart';
+import 'package:fg_by_zodyy/pages/user/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -27,6 +32,15 @@ class MyApp extends StatelessWidget {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           debugShowCheckedModeBanner: false,
           home: const HomePage(), // Page redirigée directement vers HomePage
+           routes: {
+            '/objectifs': (context) => ObjectifsPage(),
+            '/notes': (context) => NotesPage(),
+            '/books': (context) => BooksPage(),
+            '/apps': (context) => ApplicationsPage(),
+            '/home': (context) => HomePage(),
+            '/settings': (context) => HomePage(),
+            '/login': (context) => LoginPage(),
+          },
         );
       },
     );
