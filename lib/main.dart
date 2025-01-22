@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
           supportedLocales: _supportedLocales,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           debugShowCheckedModeBanner: false,
+
           home: const HomePage(), // Page redirigée directement vers HomePage
            routes: {
             '/objectifs': (context) => ObjectifsPage(),

@@ -8,7 +8,7 @@ class CustomBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-        color: const Color.fromARGB(255, 249, 208, 168),
+      color:  const Color.fromARGB(137, 213, 211, 211),
 
       shape: const CircularNotchedRectangle(),
       notchMargin: 8.0,
@@ -18,6 +18,7 @@ class CustomBottomBar extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.home),
             iconSize: 40,
+            color: const Color.fromARGB(255, 255, 255, 255),
 
             onPressed: () {
               Navigator.pushNamed(context, '/home'); // Exemple de navigation
@@ -27,6 +28,8 @@ class CustomBottomBar extends StatelessWidget {
           Spacer(),
           IconButton(
             icon: const Icon(Icons.settings),
+            color: const Color.fromARGB(255, 255, 255, 255),
+
               iconSize: 40,
             onPressed: () {
               Navigator.pushNamed(context, '/settings'); // Exemple de navigation

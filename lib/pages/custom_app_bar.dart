@@ -18,6 +18,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Couleur de fond personnalisée
+
      title: const Text(
           'Focus Goals by ZODYY ✨',
           style: TextStyle(
