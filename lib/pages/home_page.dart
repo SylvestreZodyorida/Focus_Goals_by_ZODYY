@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   final slider.CarouselSliderController _carouselController = slider.CarouselSliderController();
   final User? user = FirebaseAuth.instance.currentUser;
    final String _selectedLanguage = 'fr'; // Vous pouvez changer cette langue dynamiquement
-  bool _isLoading = true;
+  // bool _isLoading = true;
   String? _userName;
   String? _userImageUrl;
 
@@ -113,13 +113,14 @@ class _HomePageState extends State<HomePage> {
     final box = await Hive.openBox('settings');
     final bool isLoggedIn = box.get('isLoggedIn', defaultValue: false);
 
+
     if (!isLoggedIn) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const SelectLanguagePage()),
       );
     }else {
-      _openModal();
+      _openModal(context);
     }
      // Ouvrir le modal après que le contexte soit disponible
 
@@ -129,39 +130,168 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
- 
-  // Différer l'appel de setState() après la construction du widget
-Future<void> _openModal() async {
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true, // Permet de contrôler la hauteur
-      backgroundColor: const Color.fromARGB(177, 240, 240, 242), // Fond transparent pour que le rayon soit visible
-      builder: (context) {
-        // Liste des icônes et des textes associés
-       
 
-        return Container(
-          padding: const EdgeInsets.all(10.0),
-          decoration: BoxDecoration(
-            // color: const Color.fromARGB(29, 64, 94, 91), // Couleur de fond de la boîte modale
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(25.0)), // Rayon de bordure
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              
-              const SizedBox(height: 20),
-            ],
-          ),
-        );
-      },
-    );
-  });
-}
+    double completionRate = 0.50; // Exemple : 75%
+      int completedTasks = 5; // Nombre de tâches complétées (variable dynamique)
+      int totalTasks = 10;
 
+  double completionRateBooks = 0.50; // Exemple : 75%
+      int completedBooks = 5; // Nombre de tâches complétées (variable dynamique)
+      int totalBooks = 10;
 
+  Future<void> _openModal(BuildContext context) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: const Color.fromARGB(255, 240, 240, 242),
+        builder: (context) {
+          return Container(
+            padding: const EdgeInsets.all(20.0),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Focus Goals by ZODYY ✨",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color.fromARGB(235, 15, 15, 15) ),
+                ),
+                const SizedBox(height: 8),
+
+                Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+                    padding: const EdgeInsets.all(15.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3), // décalage de l'ombre
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "✔️ Vos objectifs",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                      // Nombre total de tâches (variable dynamique)
+                        Row(
+                          children: [
+                            Text(
+                              "${(completedTasks / totalTasks * 100).toStringAsFixed(0)}%", // Affiche le pourcentage calculé
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            Spacer(),
+
+                            const SizedBox(width: 8),
+                            Text(
+                              "$completedTasks/$totalTasks atteints", // Affiche le ratio dynamique
+                              style: const TextStyle(
+                                color: Color.fromARGB(255, 228, 102, 5),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: LinearProgressIndicator(
+                            value: completionRateBooks, // La valeur est mise à jour dynamiquement
+                            backgroundColor: Colors.grey[300],
+                            color: Colors.green,
+                            minHeight: 8,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+                
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+                  padding: const EdgeInsets.all(15.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3), // décalage de l'ombre
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "📚 Lecture",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      
+                      const SizedBox(height: 8),
+                          // Nombre total de tâches (variable dynamique)
+                      Row(
+                        children: [
+                          Text(
+                            "${(completedBooks / totalBooks * 100).toStringAsFixed(0)}%", // Affiche le pourcentage calculé
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                            Spacer(),
+
+                          const SizedBox(width: 8),
+                          Text(
+                            "$completedBooks/$totalBooks livres lus", // Affiche le ratio dynamique
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 228, 102, 5),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: LinearProgressIndicator(
+                          value: completionRate, // La valeur est mise à jour dynamiquement
+                          backgroundColor: Colors.grey[300],
+                          color: Colors.green,
+                          minHeight: 8,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+              ],
+            ),
+          );
+        },
+      );
+    });
+  }
 @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -411,7 +541,7 @@ Widget build(BuildContext context) {
     ),
 
     bottomNavigationBar: BottomAppBar(
-      color:  const Color.fromARGB(137, 213, 211, 211),
+      color:  const Color.fromARGB(235, 255, 255, 255),
       shape: const CircularNotchedRectangle(),
       notchMargin: 8.0,
       
@@ -420,23 +550,25 @@ Widget build(BuildContext context) {
         children: [
           IconButton(
             icon: const Icon(Icons.home),
-            color: const Color.fromARGB(255, 255, 163, 14),
+            color: const Color.fromARGB(255, 25, 25, 25),
             iconSize: 40,
-            onPressed: () {},
+            onPressed: () {
+
+            },
           ),
           IconButton(
             icon: const Icon(Icons.settings),
             iconSize: 40,
-            color: const Color.fromARGB(255, 10, 10, 10),
+            color: const Color.fromARGB(255, 25, 25, 25),
             onPressed: () {},
           ),
         ],
       ),
     ),
     floatingActionButton: FloatingActionButton(
-      onPressed: _openModal,
-      backgroundColor: const Color.fromARGB(255, 255, 163, 14),
-      child: const Icon(Icons.add_task_sharp, color:  Color.fromARGB(255, 255, 255, 255), ),
+      onPressed: () => _openModal(context),
+       backgroundColor: const Color.fromARGB(255, 255, 136, 0),
+        child: const Icon(Icons.add_task_sharp, color:Color.fromARGB(255, 248, 248, 248)),
     ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );

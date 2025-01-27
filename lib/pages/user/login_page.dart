@@ -21,8 +21,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  String _email = '';
-  String _password = '';
+  // String _email = '';
+  // String _password = '';
 
   Future<void> _signInWithGoogle() async {
     try {

@@ -1,7 +1,7 @@
 
 import 'package:fg_by_zodyy/pages/home_page.dart';
 import 'package:fg_by_zodyy/pages/user/signUp_page.dart';
-import 'package:fg_by_zodyy/pages/user/profile_page.dart';
+// import 'package:fg_by_zodyy/pages/user/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import de la classe générée par l10n
 import 'package:firebase_auth/firebase_auth.dart';
