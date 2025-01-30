@@ -7,6 +7,7 @@ import 'package:fg_by_zodyy/pages/custom_app_bar.dart';
 import 'package:fg_by_zodyy/pages/custom_bottom_bar.dart';
 import 'package:intl/intl.dart';
 
+
 class ObjectifsPage extends StatefulWidget {
   const ObjectifsPage({Key? key}) : super(key: key);
 
@@ -17,6 +18,8 @@ class ObjectifsPage extends StatefulWidget {
 class _ObjectifsPageState extends State<ObjectifsPage> {
   final User? user = FirebaseAuth.instance.currentUser;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+bool hasCompletedTasks = false;
+  List<Map<String, dynamic>> completedTasks = [];
 
   Future<void> _logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
@@ -46,6 +49,8 @@ class _ObjectifsPageState extends State<ObjectifsPage> {
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
       'createdAt': FieldValue.serverTimestamp(),
+      'status': 'pending', // Initialement "en attente"
+
     });
 
     Navigator.pop(context); // Fermer le modal après ajout
@@ -55,22 +60,63 @@ class _ObjectifsPageState extends State<ObjectifsPage> {
   }
 
   Future<void> _openModalAdd(BuildContext context) async {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      barrierDismissible: true, // Permet de fermer en cliquant à l'extérieur
       builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          maxChildSize: 0.95,
-          minChildSize: 0.5,
-          builder: (_, controller) {
-            return ModalContent(controller: controller, onAddObjective: _addObjective);
-          },
+        return Align(
+          alignment: Alignment.topCenter, // Place la boîte en haut de l'écran
+          child: Padding(
+            padding: const EdgeInsets.only(top: 40.0, left: 16.0, right: 16.0), // Ajoute des marges externes
+            child: Material(
+              color: Colors.transparent, // Fond transparent pour gérer l'arrondi
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20.0), // Arrondi les bords du modal
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white, // Couleur du fond
+                        borderRadius: BorderRadius.circular(20.0), // Bord arrondi
+                      ),
+                      width: double.infinity, // Prend toute la largeur disponible
+                      height: MediaQuery.of(context).size.height * 0.70, // Hauteur définie (70% de l'écran)
+                      padding: const EdgeInsets.all(16.0),
+                      child: ModalContent(
+                        controller: ScrollController(), // Ajout du controller ici
+                        onAddObjective: _addObjective,
+                      ),
+                    ),
+
+                    // Bouton de fermeture
+                    Positioned(
+                      top: 10, // Position depuis le haut
+                      right: 10, // Position depuis la droite
+                      child: GestureDetector(
+                        onTap: () => Navigator.of(context).pop(), // Ferme le modal
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 207, 125, 2), // Fond orange
+                            shape: BoxShape.circle, // Bouton rond
+                          ),
+                          child: const Icon(Icons.close, color: Colors.white, size: 24), // Croix blanche
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         );
       },
     );
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -78,137 +124,160 @@ class _ObjectifsPageState extends State<ObjectifsPage> {
     String? _userImageUrl = user?.photoURL;
 
     return Scaffold(
-      appBar: CustomAppBar(
-        user: user,
-        userName: _userName,
-        userImageUrl: _userImageUrl,
-        onLogout: () => _logout(context),
-      ),
-      bottomNavigationBar: CustomBottomBar(openModal: () => _openModalAdd(context)),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _openModalAdd(context),
-        backgroundColor: const Color.fromARGB(255, 255, 136, 0),
-        child: const Icon(Icons.add_task_sharp, color: Color.fromARGB(255, 248, 248, 248)),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
-      body: Stack(
-        
-        children: [
-          Positioned(
-      top: 0, // Ajustez la position verticale selon vos besoins
-      left: 16,
-      child: const Text(
-        'Vos objectifs ✨',
-        style: TextStyle(
-          fontSize: 19,
-          fontWeight: FontWeight.bold,
-          color: Color.fromARGB(255, 25, 25, 25),
+  appBar: CustomAppBar(
+    user: user,
+    userName: _userName,
+    userImageUrl: _userImageUrl,
+    onLogout: () => _logout(context),
+  ),
+  bottomNavigationBar: CustomBottomBar(openModal: () => _openModalAdd(context)),
+  floatingActionButton: FloatingActionButton(
+    onPressed: () => _openModalAdd(context),
+    backgroundColor: const Color.fromARGB(255, 255, 136, 0),
+    child: const Icon(Icons.add_task_sharp, color: Color.fromARGB(255, 248, 248, 248)),
+  ),
+  floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.orange, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
-      ),
-    ),
-            
-          // StreamBuilder pour afficher les objectifs
-          StreamBuilder<QuerySnapshot>(
-              stream: firestore
-                  .collection('objectives')
-                  .where('userId', isEqualTo: user?.uid)
-                  .orderBy('createdAt', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Center(child: Text('Erreur de chargement des objectifs: ${snapshot.error}'));
-                }
-
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'Aucun objectif trouvé. Ajoutez-en un nouveau ✨',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Vos objectifs ✨',
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 0, 0, 0),
                     ),
-                  );
-                }
+                  ),
+             
                 
-
-                final objectives = snapshot.data!.docs;
-                print(objectives); // Voir les données récupérées
-
-                return ListView.builder(
-                  itemCount: objectives.length,
-                  itemBuilder: (context, index) {
-                    final data = objectives[index].data() as Map<String, dynamic>;
-                    print(data); // Voir les données de chaque objectif
-                    return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: ListTile(
-                        title: Text(data['title'] ?? 'Sans titre'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (data['description'] != null)
-                              Text(data['description'], style: const TextStyle(fontSize: 14)),
-                            const SizedBox(height: 4),
-                            if (data['startDate'] != null)
-                              Text(
-                                'Début: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(data['startDate']))}',
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            if (data['endDate'] != null)
-                              Text(
-                                'Fin: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(data['endDate']))}',
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                          ],
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () async {
-                            await objectives[index].reference.delete();
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-
-
-          // Bouton flottant personnalisé
-          Positioned(
-            bottom: 30,
-            right: 30,
-            child: GestureDetector(
-              onTap: () {
-                _openModalAdd(context);
-              },
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Colors.orange,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 6,
-                      offset: const Offset(0, 3), // décalage ombre
-                    ),
-                  ],
-                ),
-                child: const Icon(Icons.add, color: Colors.white, size: 30),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
 
+              const SizedBox(height: 16),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: firestore
+                      .collection('objectives')
+                      .where('userId', isEqualTo: user?.uid)
+                      .orderBy('createdAt', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Erreur de chargement des objectifs: ${snapshot.error}'));
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'Aucun objectif trouvé. Ajoutez-en un nouveau ✨',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                      );
+                    }
+
+                    final objectives = snapshot.data!.docs;
+
+                    return ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: objectives.length,
+                      itemBuilder: (context, index) {
+                        final data = objectives[index].data() as Map<String, dynamic>;
+
+                        // Vérification du statut de l'objectif
+                        bool isCompleted = data['status'] == 'completed';
+
+                        final cardColor = index % 2 == 0
+                            ? const Color.fromARGB(255, 255, 255, 255)
+                            : const Color.fromARGB(255, 255, 255, 255);
+
+                        return Card(
+                          color: cardColor,
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          child: ListTile(
+                            title: Text(data['title'] ?? 'Sans titre', style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w600)),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (data['description'] != null)
+                                  Text(data['description'], style: const TextStyle(fontSize: 14)),
+                                const SizedBox(height: 4),
+                                if (data['startDate'] != null)
+                                  Text(
+                                    'Début: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(data['startDate']))}',
+                                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color.fromARGB(255, 1, 15, 117)),
+                                  ),
+                                if (data['endDate'] != null)
+                                  Text(
+                                    'Fin: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(data['endDate']))}',
+                                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color.fromARGB(255, 1, 117, 9)),
+                                  ),
+                                if (isCompleted) 
+                                  Text(
+                                    'Objectif atteint ✨',
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: const Color.fromARGB(255, 225, 82, 5)),
+                                  ),
+
+                                  
+                              ],
+                            ),
+                            trailing: isCompleted
+                                ? IconButton(
+                                        icon: const Icon(Icons.delete_sweep_outlined, color: Colors.red),
+                                        onPressed: () async {
+                                          await objectives[index].reference.delete();
+                                        },
+                                      ) // Si l'objectif est terminé, ne pas afficher l'icône de suppression
+                                : Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.check_circle, color: Colors.green),
+                                        onPressed: () async {
+                                          // Mettre à jour le statut dans Firestore pour marquer l'objectif comme terminé
+                                          await objectives[index].reference.update({'status': 'completed'});
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete_sweep_outlined, color: Colors.red),
+                                        onPressed: () async {
+                                          await objectives[index].reference.delete();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
+
   }
 }
 
@@ -379,28 +448,7 @@ class _ModalContentState extends State<ModalContent> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Comment l’atteindre ?',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.orange,
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              maxLines: 3,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey[200],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide.none,
-                ),
-                hintText: 'Décrivez les étapes pour atteindre cet objectif',
-              ),
-            ),
-            const SizedBox(height: 24),
+         
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -412,14 +460,14 @@ class _ModalContentState extends State<ModalContent> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
+                  backgroundColor: const Color.fromARGB(255, 207, 125, 2),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
                 child: const Text(
-                  'Ajouter',
+                  'Ajouter à vos objectifs',
                   style: TextStyle(
                     fontSize: 19,
                     fontWeight: FontWeight.bold,

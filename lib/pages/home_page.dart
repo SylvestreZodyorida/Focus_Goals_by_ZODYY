@@ -3,12 +3,14 @@ import 'package:fg_by_zodyy/pages/main/notes_page.dart';
 import 'package:fg_by_zodyy/pages/main/objectifs_page.dart';
 import 'package:fg_by_zodyy/pages/main/routine_page.dart';
 import 'package:fg_by_zodyy/pages/user/login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:carousel_slider/carousel_slider.dart' as slider;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:fg_by_zodyy/pages/introduction/langues_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,6 +26,9 @@ class _HomePageState extends State<HomePage> {
   // bool _isLoading = true;
   String? _userName;
   String? _userImageUrl;
+    int completedTasks = 0;
+  int totalTasks = 0;
+  double completionRate = 0.0;
 
   int _currentSlide = 0;
 
@@ -38,7 +43,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _loadUserProfile();
     _checkUserLogin();
-    
+      _fetchObjectiveData();
   }
 
   @override
@@ -55,60 +60,60 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
- List<Map<String, dynamic>> blocData = [
-      {
-        'image': 'assets/images/home_objectifs.jpg',
-        'text': 'Vos Ojectifs',
-        'textColor': const Color.fromARGB(255, 10, 10, 10), 
-        'page': const ObjectifsPage(),
-      },
-      {
-        'image': 'assets/images/home_emotion.jpg',
-        'text': 'Gérer une émotion',
-        'textColor': const Color.fromARGB(255, 10, 10, 10), 
-        'page': const EmotionPage(),
-      },
-      {
-        'image': 'assets/images/home_routine.jpg',
-        'text': 'Routine journalière',
-        'textColor': const Color.fromARGB(255, 10, 10, 10), 
-        'page': const RoutinePage(),
-      },
-      {
-        'image': 'assets/images/home_notes.jpg',
-        'text': 'Ajouter une note',
-        'textColor': const Color.fromARGB(255, 10, 10, 10), 
-        'page': const NotesPage(),
-      },
-         {
-        'image': 'assets/images/icons/lecture2.jpg',
-        'text': 'Lire un livre ',
-        'textColor': const Color.fromARGB(255, 10, 10, 10), 
-        'page': const NotesPage(),
-      },
+  List<Map<String, dynamic>> blocData = [
+        {
+          'image': 'assets/images/home_objectifs.jpg',
+          'text': 'Vos Ojectifs',
+          'textColor': const Color.fromARGB(255, 10, 10, 10), 
+          'page': const ObjectifsPage(),
+        },
+        {
+          'image': 'assets/images/home_emotion.jpg',
+          'text': 'Gérer une émotion',
+          'textColor': const Color.fromARGB(255, 10, 10, 10), 
+          'page': const EmotionPage(),
+        },
+        {
+          'image': 'assets/images/home_routine.jpg',
+          'text': 'Routine journalière',
+          'textColor': const Color.fromARGB(255, 10, 10, 10), 
+          'page': const RoutinePage(),
+        },
+        {
+          'image': 'assets/images/home_notes.jpg',
+          'text': 'Ajouter une note',
+          'textColor': const Color.fromARGB(255, 10, 10, 10), 
+          'page': const NotesPage(),
+        },
+          {
+          'image': 'assets/images/icons/lecture2.jpg',
+          'text': 'Lire un livre ',
+          'textColor': const Color.fromARGB(255, 10, 10, 10), 
+          'page': const NotesPage(),
+        },
 
-      {
-        'image': 'assets/images/icons/manger.jpg',
-        'text': 'Bien manger',
-        'textColor': const Color.fromARGB(255, 10, 10, 10), 
-        'page': const NotesPage(),
-      },
+        {
+          'image': 'assets/images/icons/manger.jpg',
+          'text': 'Bien manger',
+          'textColor': const Color.fromARGB(255, 10, 10, 10), 
+          'page': const NotesPage(),
+        },
 
-      {
-        'image': 'assets/images/icons/sport.jpg',
-        'text': 'Activité physique',
-        'textColor': const Color.fromARGB(255, 10, 10, 10), 
-        'page': const NotesPage(),
-      },
+        {
+          'image': 'assets/images/icons/sport.jpg',
+          'text': 'Activité physique',
+          'textColor': const Color.fromARGB(255, 10, 10, 10), 
+          'page': const NotesPage(),
+        },
 
-      // {
-      //   'image': 'assets/images/home_notes.jpg',
-      //   'text': 'Applications utilles',
-      //   'textColor': const Color.fromARGB(255, 10, 10, 10), 
-      //   'page': const NotesPage(),
-      // },
-    ];
-    
+        // {
+        //   'image': 'assets/images/home_notes.jpg',
+        //   'text': 'Applications utilles',
+        //   'textColor': const Color.fromARGB(255, 10, 10, 10), 
+        //   'page': const NotesPage(),
+        // },
+      ];
+      
   Future<void> _checkUserLogin() async {
     final box = await Hive.openBox('settings');
     final bool isLoggedIn = box.get('isLoggedIn', defaultValue: false);
@@ -130,10 +135,27 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+Future<void> _fetchObjectiveData() async {
+    // Récupérer les données de la collection "objectives" depuis Firebase
+    final snapshot = await FirebaseFirestore.instance.collection('objectives').get();
 
-    double completionRate = 0.50; // Exemple : 75%
-      int completedTasks = 5; // Nombre de tâches complétées (variable dynamique)
-      int totalTasks = 10;
+    int completed = 0;
+    int total = snapshot.docs.length;
+
+    // Parcourir les documents et compter les objectifs terminés
+    for (var doc in snapshot.docs) {
+      if (doc['status'] == 'completed') {
+        completed++;
+      }
+    }
+
+    // Mettre à jour les variables d'état
+    setState(() {
+      completedTasks = completed;
+      totalTasks = total;
+      completionRate = total > 0 ? completed / total : 0.0; // Éviter la division par 0
+    });
+  }
 
   double completionRateBooks = 0.50; // Exemple : 75%
       int completedBooks = 5; // Nombre de tâches complétées (variable dynamique)
@@ -161,66 +183,127 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 8),
 
-                Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
-                    padding: const EdgeInsets.all(15.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3), // décalage de l'ombre
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "✔️ Vos objectifs",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                      // Nombre total de tâches (variable dynamique)
-                        Row(
-                          children: [
-                            Text(
-                              "${(completedTasks / totalTasks * 100).toStringAsFixed(0)}%", // Affiche le pourcentage calculé
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                // Container(
+                //     margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+                //     padding: const EdgeInsets.all(15.0),
+                //     decoration: BoxDecoration(
+                //       color: Colors.white,
+                //       borderRadius: BorderRadius.circular(15.0),
+                //       boxShadow: [
+                //         BoxShadow(
+                //           color: Colors.grey.withOpacity(0.3),
+                //           spreadRadius: 2,
+                //           blurRadius: 5,
+                //           offset: const Offset(0, 3), // décalage de l'ombre
+                //         ),
+                //       ],
+                //     ),
+                //     child: Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         const Text(
+                //           "✔️ Vos objectifs",
+                //           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                //         ),
+                //         const SizedBox(height: 8),
+                //       // Nombre total de tâches (variable dynamique)
+                //         Row(
+                //           children: [
+                //             Text(
+                //               "${(completedTasks / totalTasks * 100).toStringAsFixed(0)}%", // Affiche le pourcentage calculé
+                //               style: const TextStyle(
+                //                 fontSize: 24,
+                //                 fontWeight: FontWeight.bold,
+                //               ),
+                //             ),
 
-                            Spacer(),
+                //             Spacer(),
 
-                            const SizedBox(width: 8),
-                            Text(
-                              "$completedTasks/$totalTasks atteints", // Affiche le ratio dynamique
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 228, 102, 5),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
+                //             const SizedBox(width: 8),
+                //             Text(
+                //               "$completedTasks/$totalTasks atteints", // Affiche le ratio dynamique
+                //               style: const TextStyle(
+                //                 color: Color.fromARGB(255, 228, 102, 5),
+                //                 fontWeight: FontWeight.bold,
+                //               ),
+                //             ),
+                //           ],
+                //         ),
 
-                        const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: LinearProgressIndicator(
-                            value: completionRateBooks, // La valeur est mise à jour dynamiquement
-                            backgroundColor: Colors.grey[300],
-                            color: Colors.green,
-                            minHeight: 8,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                //         const SizedBox(height: 8),
+                //         ClipRRect(
+                //           borderRadius: BorderRadius.circular(8),
+                //           child: LinearProgressIndicator(
+                //             value: completionRateBooks, // La valeur est mise à jour dynamiquement
+                //             backgroundColor: Colors.grey[300],
+                //             color: Colors.green,
+                //             minHeight: 8,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+
+
+Container(
+  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+  padding: const EdgeInsets.all(15.0),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(15.0),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.grey.withOpacity(0.3),
+        spreadRadius: 2,
+        blurRadius: 5,
+        offset: const Offset(0, 3), // décalage de l'ombre
+      ),
+    ],
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        "✔️ Vos objectifs",
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 8),
+      // Nombre total de tâches (variable dynamique)
+      Row(
+        children: [
+          Text(
+            "${(completionRate * 100).toStringAsFixed(0)}%", // Affiche le pourcentage calculé
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Spacer(),
+          const SizedBox(width: 8),
+          Text(
+            "$completedTasks/$totalTasks atteints", // Affiche le ratio dynamique
+            style: const TextStyle(
+              color: Color.fromARGB(255, 228, 102, 5),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 8),
+      ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: LinearProgressIndicator(
+          value: completionRate, // La valeur est mise à jour dynamiquement
+          backgroundColor: Colors.grey[300],
+          color: Colors.green,
+          minHeight: 8,
+        ),
+      ),
+    ],
+  ),
+),
+
+
 
                   const SizedBox(height: 10),
                 
