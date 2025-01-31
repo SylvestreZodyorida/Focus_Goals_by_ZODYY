@@ -26,8 +26,9 @@ class _HomePageState extends State<HomePage> {
   // bool _isLoading = true;
   String? _userName;
   String? _userImageUrl;
-    int completedTasks = 0;
+  int completedTasks = 0;
   int totalTasks = 0;
+  int totalNotes = 0;
   double completionRate = 0.0;
 
   int _currentSlide = 0;
@@ -43,7 +44,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _loadUserProfile();
     _checkUserLogin();
-      _fetchObjectiveData();
+    _fetchObjectiveData();
+    _fetchObjectiveNotes();
   }
 
   @override
@@ -164,6 +166,27 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<void> _fetchObjectiveNotes() async {
+    // Vérifier si l'utilisateur est connecté
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // Si l'utilisateur n'est pas connecté, sortir de la fonction
+      print("Utilisateur non connecté");
+      return;  // Sortir de la fonction
+    }
+
+    // Récupérer les données de la collection "objectives" depuis Firebase
+    final snapshot = await FirebaseFirestore.instance.collection('notes').get();
+
+    int total = snapshot.docs.length;
+
+    // Mettre à jour les variables d'état
+    setState(() {
+      totalNotes = total;
+    });
+  }
+
+
   double completionRateBooks = 0.50; // Exemple : 75%
       int completedBooks = 5; // Nombre de tâches complétées (variable dynamique)
       int totalBooks = 10;
@@ -190,70 +213,94 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 8),
 
-              
-
-
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
-                padding: const EdgeInsets.all(15.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3), // décalage de l'ombre
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "✔️ Vos objectifs",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    // Nombre total de tâches (variable dynamique)
-                    Row(
-                      children: [
-                        Text(
-                          "${(completionRate * 100).toStringAsFixed(0)}%", // Affiche le pourcentage calculé
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Spacer(),
-                        const SizedBox(width: 8),
-                        Text(
-                          "$completedTasks/$totalTasks atteints", // Affiche le ratio dynamique
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 228, 102, 5),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: completionRate, // La valeur est mise à jour dynamiquement
-                        backgroundColor: Colors.grey[300],
-                        color: Colors.green,
-                        minHeight: 8,
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+                  padding: const EdgeInsets.all(15.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 3, 51, 174),
+                    borderRadius: BorderRadius.circular(15.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3), // décalage de l'ombre
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "$totalNotes notes ajoutées ✨",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 255, 255, 255), ),
+                      ),
+                      const SizedBox(height: 8),
+                    
+                    ],
+                  ),
                 ),
-              ),
 
 
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+                  padding: const EdgeInsets.all(15.0),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(112, 240, 149, 13),
+                    borderRadius: BorderRadius.circular(15.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3), // décalage de l'ombre
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "✔️ Vos objectifs",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      // Nombre total de tâches (variable dynamique)
+                      Row(
+                        children: [
+                          Text(
+                            "${(completionRate * 100).toStringAsFixed(0)}%", // Affiche le pourcentage calculé
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Spacer(),
+                          const SizedBox(width: 8),
+                          Text(
+                            "$completedTasks/$totalTasks atteints", // Affiche le ratio dynamique
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: LinearProgressIndicator(
+                          value: completionRate, // La valeur est mise à jour dynamiquement
+                          backgroundColor: Colors.grey[300],
+                          color: Color.fromARGB(255, 3, 51, 174),
+                          minHeight: 8,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
-                  const SizedBox(height: 10),
+                const SizedBox(height: 10),
                 
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
