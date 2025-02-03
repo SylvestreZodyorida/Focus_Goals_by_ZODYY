@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> blocData = [
         {
           'image': 'assets/images/home_objectifs.jpg',
-          'text': 'Vos Ojectifs',
+          'text': 'Consultez vos ojectifs',
           'textColor': const Color.fromARGB(255, 10, 10, 10), 
           'page': const ObjectifsPage(),
         },
@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
         },
         {
           'image': 'assets/images/home_notes.jpg',
-          'text': 'Ajouter une note',
+          'text': 'Consultez vos notes',
           'textColor': const Color.fromARGB(255, 10, 10, 10), 
           'page': const NotesPage(),
         },

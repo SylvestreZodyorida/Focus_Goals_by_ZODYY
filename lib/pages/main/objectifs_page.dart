@@ -220,21 +220,21 @@ bool hasCompletedTasks = false;
                               children: [
                                 if (data['description'] != null)
                                   Text(data['description'], style: const TextStyle(fontSize: 14)),
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 10),
                                 if (data['startDate'] != null)
                                   Text(
                                     'Début: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(data['startDate']))}',
-                                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color.fromARGB(255, 1, 15, 117)),
+                                    style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: Color.fromARGB(255, 1, 15, 117)),
                                   ),
                                 if (data['endDate'] != null)
                                   Text(
                                     'Fin: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(data['endDate']))}',
-                                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color.fromARGB(255, 1, 117, 9)),
+                                    style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: Color.fromARGB(255, 1, 117, 9)),
                                   ),
                                 if (isCompleted) 
                                   Text(
                                     'Objectif atteint ✨',
-                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: const Color.fromARGB(255, 225, 82, 5)),
+                                    style: TextStyle(fontSize: 8, fontWeight: FontWeight.w600, color: const Color.fromARGB(255, 225, 82, 5)),
                                   ),
 
                                   
