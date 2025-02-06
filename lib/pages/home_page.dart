@@ -1,3 +1,4 @@
+import 'package:fg_by_zodyy/pages/main/books_page.dart';
 import 'package:fg_by_zodyy/pages/main/emotion_page.dart';
 import 'package:fg_by_zodyy/pages/main/notes_page.dart';
 import 'package:fg_by_zodyy/pages/main/objectifs_page.dart';
@@ -91,7 +92,7 @@ class _HomePageState extends State<HomePage> {
           'image': 'assets/images/icons/lecture2.jpg',
           'text': 'Lire un livre ',
           'textColor': const Color.fromARGB(255, 10, 10, 10), 
-          'page': const NotesPage(),
+          'page': const BooksPage(),
         },
 
         {

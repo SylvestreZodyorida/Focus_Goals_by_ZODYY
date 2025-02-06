@@ -37,6 +37,9 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
   build_runner: ^2.1.0
+  connectivity_plus: ^6.1.2
+  firebase_storage: ^12.4.2
+  firebase_core_platform_interface: ^5.4.0
 
 flutter_launcher_icons:
   android: "launcher_icon"  # Generate launcher icons for Android

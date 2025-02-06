@@ -1,5 +1,64 @@
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+class RoutinePage extends StatefulWidget {
+  const RoutinePage({Key? key}) : super(key: key);
+
+  @override
+  _RoutinePageState createState() => _RoutinePageState();
+}
+
+class _RoutinePageState extends State<RoutinePage> {
+  late User? _user;
+  
+  @override
+  void initState() {
+    super.initState();
+    _user = FirebaseAuth.instance.currentUser;
+    // Vérifier la connexion Internet dès que la page est chargée
+ 
+    // Écouter les changements de connectivité
+    
+  }
+
+ 
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
+    // Rediriger l'utilisateur vers la page de connexion
+    Navigator.of(context).pushReplacementNamed('/login');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: CustomAppBar(
+        user: _user,
+        userName: _user?.displayName,
+        userImageUrl: _user?.photoURL,
+        onLogout: _logout,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const Text(
+              'Bienvenue dans votre routine!',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Cette page affichera votre planification et vos objectifs.',
+              style: TextStyle(fontSize: 18),
+            ),
+            // Le contenu de ta page
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final User? user;
@@ -19,15 +78,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Couleur de fond personnalisée
-
-     title: const Text(
-          'Focus Goals by ZODYY ✨',
-          style: TextStyle(
-            color: Color.fromARGB(255, 0, 0, 0),
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-          ),
+      title: const Text(
+        'Focus Goals by ZODYY ✨',
+        style: TextStyle(
+          color: Color.fromARGB(255, 0, 0, 0),
+          fontSize: 17,
+          fontWeight: FontWeight.bold,
         ),
+      ),
       actions: [
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -56,7 +114,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       );
     } else {
       // Si l'utilisateur n'a pas de photo, on affiche une icône par défaut
-     return CircleAvatar(
+      return CircleAvatar(
         radius: 22,
         backgroundColor: Colors.grey.shade200,
         child: Image.asset(

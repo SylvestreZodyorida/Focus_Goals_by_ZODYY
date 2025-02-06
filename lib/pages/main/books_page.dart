@@ -1,17 +1,16 @@
-import 'package:fg_by_zodyy/pages/custom_app_bar.dart';
-import 'package:fg_by_zodyy/pages/custom_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BooksPage extends StatelessWidget {
   const BooksPage({Key? key}) : super(key: key);
 
-   // Fonction de déconnexion
+  // Fonction de déconnexion
   Future<void> _logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacementNamed(context, '/login');  // Redirige vers la page de connexion
+    Navigator.pushReplacementNamed(context, '/login'); // Redirige vers la page de connexion
   }
-
 
   Future<void> _openModal(BuildContext context) async {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -91,27 +90,63 @@ class BooksPage extends StatelessWidget {
     });
   }
 
+  Future<void> _downloadBook(String bookUrl) async {
+    if (await canLaunch(bookUrl)) {
+      await launch(bookUrl); // Lance l'URL du fichier PDF pour le téléchargement
+    } else {
+      throw 'Impossible d\'ouvrir le lien';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final User? user = FirebaseAuth.instance.currentUser;
-     String? _userName = user?.displayName;
+    String? _userName = user?.displayName;
     String? _userImageUrl = user?.photoURL;
+
+    // Liste de livres (avec une URL de téléchargement pour chaque livre)
+    final List<Map<String, String>> books = [
+      {
+        'title': 'Livre 1: Développement Personnel',
+        'author': 'Auteur 1',
+        'image': 'assets/images/books/book1.jpg',
+        'downloadUrl': 'https://example.com/book1.pdf', // Remplacez par l'URL de votre livre
+      },
+      {
+        'title': 'Livre 2: Croissance Personnelle',
+        'author': 'Auteur 2',
+        'image': 'assets/images/books/book2.jpg',
+        'downloadUrl': 'https://example.com/book2.pdf',
+      },
+    ];
+
     return Scaffold(
-       appBar: CustomAppBar(
-        user: user,
-        userName: _userName,
-        userImageUrl: _userImageUrl,
-        onLogout: () => _logout(context),
+      appBar: AppBar(
+        title: Text('Livres de Développement Personnel'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () => _logout(context),
+          ),
+        ],
       ),
-      bottomNavigationBar: CustomBottomBar(openModal: () => _openModal(context)),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _openModal(context),
-         backgroundColor: const Color.fromARGB(255, 255, 136, 0),
-        child: const Icon(Icons.add_task_sharp, color:Color.fromARGB(255, 248, 248, 248)),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      body: const Center(
-        child: Text('Lire un Livre 📚', style: TextStyle(fontSize: 20)),
+      body: ListView.builder(
+        itemCount: books.length,
+        itemBuilder: (context, index) {
+          final book = books[index];
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            child: ListTile(
+              leading: Image.asset(book['image']!),
+              title: Text(book['title']!),
+              subtitle: Text('Par ${book['author']}'),
+              trailing: IconButton(
+                icon: Icon(Icons.download),
+                onPressed: () => _downloadBook(book['downloadUrl']!),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
